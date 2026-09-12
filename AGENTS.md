@@ -41,7 +41,8 @@
 
 | Action                  | Command              | Notes                                             |
 | :---------------------- | :------------------- | :------------------------------------------------ |
-| **Start Server**        | `npm start`          | Runs `node index.ts` via Stdio transport          |
+| **Build App**           | `npm run build`      | Compiles TypeScript to `dist/` via `tsc`          |
+| **Start Server**        | `npm start`          | Runs `node dist/index.js` via Stdio transport     |
 | **Format Code**         | `npm run format`     | Formats all project files in-place using `oxfmt`  |
 | **Lint**                | `npm run lint`       | Checks code using `oxlint`                        |
 | **Lint & Fix**          | `npm run lint:fix`   | Automatically fixes lint issues with `oxlint`     |
@@ -52,10 +53,11 @@
 
 ## Coding & Operational Guidelines
 
-### 1. Direct TypeScript Execution
+### 1. TypeScript Build & Execution
 
-- This project runs TypeScript directly with Node.js >= 24 without any build step, transpiler, or `tsc`.
-- All imports between local TypeScript files must explicitly include the `.ts` extension (e.g. `import { defaultClient } from "./src/api.ts";`).
+- Source files in TypeScript can be run directly with Node >= 24 during development (e.g. `node index.ts`).
+- Before publishing to npm, `npm run build` runs `tsc` to compile TypeScript to JavaScript in `dist/`.
+- All imports between local TypeScript files use `.ts` extensions, which `tsc` automatically rewrites to `.js` in emitted code via `rewriteRelativeImportExtensions`.
 
 ### 2. MCP Stdio Protocol Hygiene
 

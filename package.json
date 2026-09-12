@@ -1,6 +1,6 @@
 {
   "name": "trace.moe-mcp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Model Context Protocol (MCP) server for trace.moe anime scene search",
   "keywords": [
     "anime",
@@ -18,16 +18,17 @@
     "url": "git+https://github.com/soruly/trace.moe-mcp.git"
   },
   "bin": {
-    "trace.moe-mcp": "./index.ts"
+    "tracemoe-mcp": "./dist/index.js"
   },
   "files": [
-    "index.ts",
-    "src"
+    "dist"
   ],
   "type": "module",
-  "main": "index.ts",
+  "main": "./dist/index.js",
   "scripts": {
-    "start": "node index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "prepublishOnly": "npm run build && npm test",
     "format": "oxfmt",
     "lint": "oxlint",
     "lint:fix": "oxlint --fix",
@@ -43,7 +44,8 @@
     "@types/node": "^26.5.1",
     "@types/sharp": "^0.31.1",
     "oxfmt": "^0.67.0",
-    "oxlint": "^1.82.0"
+    "oxlint": "^1.82.0",
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">=24"
