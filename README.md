@@ -5,63 +5,32 @@
 [![npm](https://img.shields.io/npm/v/trace.moe-mcp.svg?style=flat-square)](https://www.npmjs.com/package/trace.moe-mcp)
 [![Discord](https://img.shields.io/discord/437578425767559188.svg?style=flat-square)](https://discord.gg/K9jn6Kj)
 
-Model Context Protocol (MCP) server for [trace.moe](https://trace.moe) anime scene search API.
+Model Context Protocol (MCP) server to use [trace.moe](https://trace.moe) with your large language model.
 
-## Features
+![Antigravity Demo](https://images.plurk.com/2HpIzS2TntWZyhzWf2ZC3C.png)
 
-- **Local Image Pre-processing & Vector Extraction**:
-  - Automatically loads and decodes images locally (JPEG, PNG, WebP, AVIF, etc.).
-  - Detects and crops black letterbox/pillarbox borders (`cutBorders`).
-  - Computes the 33-element MPEG-7 Color Layout Descriptor vector using 8×8 2D-DCT locally.
-  - Sends **only the compact 33-number vector** (~150 bytes JSON payload) to `api.trace.moe`, minimizing bandwidth and keeping image content private.
-- **Multiple Image Sources**: Supports direct Image URLs, local file paths, base64 strings, or pre-computed vectors.
-- **Anime Title & Metadata Search**: Search anime titles, romanized names, and synonyms via `/anilist`.
-- **Account & Quota Status**: Check remaining quota, concurrency limits, and priority via `/me` resource and tool.
-- **Guided AI Prompt Template**: `identify_anime_scene` prompt template for LLMs.
+With LLM, language is not a problem. You can ask in any language you want.
 
-## Available Tools
-
-| Tool                         | Description                                                                   | Inputs                                                                                                                                                                               |
-| :--------------------------- | :---------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `search_anime_by_image_url`  | Search anime scene by image URL (preprocessed locally into 33-element vector) | `url` (string, required)<br>`cutBorders` (boolean, default true)<br>`anilistInfo` (boolean, default true)<br>`anilistID` (number, optional)                                          |
-| `search_anime_by_image_file` | Search anime scene from local file path or base64 string                      | `filePath` (string, optional)<br>`imageBase64` (string, optional)<br>`cutBorders` (boolean, default true)<br>`anilistInfo` (boolean, default true)<br>`anilistID` (number, optional) |
-| `search_anime_by_vector`     | Search anime scene directly using a 33-element color layout vector            | `vector` (array of 33 numbers, required)<br>`anilistInfo` (boolean, default true)<br>`anilistID` (number, optional)                                                                  |
-| `search_anime_by_name`       | Search anime metadata and retrieve Anilist IDs by name/title                  | `query` (string, required)                                                                                                                                                           |
-| `get_account_quota`          | Check current daily search quota, concurrency limit, and priority             | _(None)_                                                                                                                                                                             |
-
-## Available Resources
-
-- `tracemoe://me` - Current search quota, priority, concurrency, and 24h usage status in JSON format.
-
-## Available Prompts
-
-- `trace_moe` - Prompt template guiding the AI model on how to identify an anime screenshot.
-
-## Environment Variables
-
-- `TRACE_MOE_API_KEY`: Optional API key sent via `x-trace-key` for higher rate limits and daily quota.
-- `TRACE_MOE_API_HOST`: Optional custom API endpoint (defaults to `https://api.trace.moe`).
+![Antigravity Demo in Chinese](https://images.plurk.com/5afs1YgjSTJr3fClytUicI.png)
 
 ## Installation & Running
 
-### Option 1: Run with `npx` (No installation required)
+Prerequisites: Node.js 24 or higher.
 
-```bash
-npx -y trace.moe-mcp
+Open MCP Config and add the following configuration:
+
+```json
+{
+  "mcpServers": {
+    "trace_moe": {
+      "command": "npx",
+      "args": ["-y", "trace.moe-mcp"]
+    }
+  }
+}
 ```
 
-### Option 2: Run directly from source
-
-```bash
-git clone https://github.com/soruly/trace.moe-mcp.git
-cd trace.moe-mcp
-npm install
-node index.ts
-```
-
-### MCP Client Configuration (Claude Desktop, Cursor, Antigravity, etc.)
-
-#### Using `npx`:
+(Optional) If you have an API key from [https://trace.moe/](https://trace.moe/), you can add `TRACE_MOE_API_KEY` to the configuration:
 
 ```json
 {
@@ -77,18 +46,33 @@ node index.ts
 }
 ```
 
-#### Using local repository:
+## Features
 
-```json
-{
-  "mcpServers": {
-    "trace_moe": {
-      "command": "node",
-      "args": ["/absolute/path/to/trace.moe-mcp/index.ts"],
-      "env": {
-        "TRACE_MOE_API_KEY": "your_api_key_here"
-      }
-    }
-  }
-}
-```
+- **Local Image Processing**: Only image hash is sent to trace.moe, so your images are not uploaded to trace.moe.
+- **Black Borders Cropping**: Detects and crops black borders automatically.
+- **Multiple Image Sources**: Supports direct Image URLs, local file paths, base64 strings, or pre-computed vectors.
+- **Anime Title & Metadata Search**: Search anime titles, romanized names, and synonyms via `/anilist`.
+- **Account & Quota Status**: Check remaining quota, concurrency limits, and priority via `/me` resource and tool.
+
+## Available Tools
+
+| Tool                         | Description                                                                                                                                                                          |
+| :--------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `search_anime_by_image_url`  | `url` (string, required)<br>`cutBorders` (boolean, default true)<br>`anilistInfo` (boolean, default true)<br>`anilistID` (number, optional)                                          |
+| `search_anime_by_image_file` | `filePath` (string, optional)<br>`imageBase64` (string, optional)<br>`cutBorders` (boolean, default true)<br>`anilistInfo` (boolean, default true)<br>`anilistID` (number, optional) |
+| `search_anime_by_vector`     | `vector` (array of 33 numbers, required)<br>`anilistInfo` (boolean, default true)<br>`anilistID` (number, optional)                                                                  |
+| `search_anime_by_name`       | `query` (string, required)                                                                                                                                                           |
+| `get_account_quota`          | Check current search quota, concurrency limit                                                                                                                                        |
+
+## Available Resources
+
+- `tracemoe://me` - Current search quota, concurrency, and 24h usage status in JSON format.
+
+## Available Prompts
+
+- `trace_moe` - Prompt template guiding the AI model on how to identify an anime screenshot.
+
+## Environment Variables
+
+- `TRACE_MOE_API_KEY`: Optional API key sent via `x-trace-key` for higher rate limits and daily quota.
+- `TRACE_MOE_API_HOST`: Optional custom API endpoint (defaults to `https://api.trace.moe`).
