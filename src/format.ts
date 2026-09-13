@@ -139,8 +139,8 @@ export function formatSearchResultsMarkdown(response: SearchResponse): string {
     lines.push(
       `- **Anilist**: [https://anilist.co/anime/${titleInfo.id}](https://anilist.co/anime/${titleInfo.id})`,
     );
-    lines.push(`- **Preview Image**: ${item.image}`);
-    lines.push(`- **Preview Video**: ${item.video}`);
+    lines.push(`- **Preview Image**: ${item.image}?size=l`);
+    lines.push(`- **Preview Video**: ${item.video}?size=l`);
     lines.push("");
   });
 
